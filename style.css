@@ -1,83 +1,220 @@
-/* 控えめなブログ風レイアウト。フォントファミリーは指定しません。 */
+/*
+ * 知識台帳 — ctenidium28 の既存CSSを参考にしたダークテーマ。
+ * 色彩: body #0d1117 / panel #161b22 / border #30363d
+ * 独自フォントファイルは配布せず、一般的な等幅フォントにフォールバック。
+ */
 :root {
-  color-scheme: light;
-  --background: #fff;
-  --text: #30343a;
-  --muted: #747c85;
-  --link: #2875ad;
-  --border: #e5e8eb;
-  --sidebar: #f9fafb;
+  color-scheme: dark;
+  --background: #0d1117;
+  --panel: #161b22;
+  --text: #d6deeb;
+  --heading: #fff;
+  --muted: #9aa7b2;
+  --muted-soft: #8b949e;
+  --link: #58a6ff;
+  --border: #30363d;
+  --hover: #21262d;
+  --selected: #30363d;
+  --primary: #238636;
+  --primary-border: #2ea043;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { margin: 0; color: var(--text); background: var(--background); line-height: 1.85; font-size: 15px; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--text);
+  font-family: "Envy Code B", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+  font-size: 14px;
+  line-height: 1.7;
+}
+button, input, textarea { font: inherit; }
 a { color: var(--link); text-decoration: none; }
 a:hover { text-decoration: underline; }
-button { font: inherit; cursor: pointer; }
-.layout { display: flex; min-height: 100dvh; }
-.sidebar { width: 235px; flex: 0 0 235px; min-height: 100dvh; padding: 42px 23px; background: var(--sidebar); border-right: 1px solid var(--border); }
-.site-title { display: block; font-size: 21px; line-height: 1.4; font-weight: 700; letter-spacing: .025em; color: var(--text); }
-.site-title:hover { text-decoration: none; }
-.site-subtitle { color: var(--muted); margin: 7px 0 28px; font-size: 12px; }
-.create-button { display: block; width: 100%; text-align: center; border: 1px solid #d6dce1; background: white; border-radius: 4px; padding: 8px 10px; color: #444; }
-.create-button:hover, .create-button:focus-visible { border-color: var(--link); background: #f5faff; }
-.navigation { display: flex; flex-direction: column; margin-top: 24px; gap: 3px; }
-.navigation a { display: block; padding: 7px 11px; border-radius: 3px; color: #40464d; }
-.navigation a:hover { color: var(--link); background: #edf4f9; text-decoration: none; }
-.navigation a[aria-current="page"] { font-weight: 700; color: var(--link); background: #eaf3f9; }
-.main-content { width: min(100%, 880px); padding: 50px 52px 110px; margin: 0; }
-.section-heading { border-bottom: 1px solid var(--border); padding-bottom: 14px; margin-bottom: 22px; }
-.section-heading h1 { margin: 0; font-size: 24px; font-weight: 650; line-height: 1.5; }
-.section-heading p { color: var(--muted); font-size: 13px; margin: 7px 0 0; }
+button { cursor: pointer; }
+:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+
+/* 横幅を参考CSSの980px程度に制限する。PCは左メニュー、右は記事パネル。 */
+.layout {
+  display: grid;
+  grid-template-columns: 205px minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  width: min(1100px, calc(100% - 32px));
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: 32px 0 60px;
+}
+.sidebar {
+  min-width: 0;
+  padding: 20px 16px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  position: sticky;
+  top: 20px;
+}
+.site-title {
+  display: block;
+  color: var(--heading);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: .01em;
+  line-height: 1.4;
+}
+.site-title:hover { color: var(--heading); text-decoration: none; }
+.site-subtitle { color: var(--muted); font-size: 12px; margin: 6px 0 23px; }
+.create-button {
+  width: 100%;
+  padding: 9px 12px;
+  text-align: center;
+  color: #fff;
+  background: var(--primary);
+  border: 1px solid var(--primary-border);
+  border-radius: 6px;
+}
+.create-button:hover { background: var(--primary-border); }
+.navigation { display: flex; flex-direction: column; gap: 3px; margin-top: 18px; }
+.navigation a {
+  display: block;
+  padding: 7px 10px;
+  color: var(--text);
+  border: 1px solid transparent;
+  border-radius: 6px;
+}
+.navigation a:hover { text-decoration: none; background: var(--hover); }
+.navigation a[aria-current="page"] {
+  color: var(--heading);
+  background: var(--selected);
+  border-color: #484f58;
+}
+
+.main-content {
+  min-width: 0;
+  min-height: 380px;
+  padding: 28px 30px 42px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.section-heading {
+  margin: 0 0 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.section-heading h1 {
+  margin: 0;
+  color: var(--heading);
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.section-heading p { margin: 8px 0 0; color: var(--muted); font-size: 13px; }
 .article-list { list-style: none; padding: 0; margin: 0; }
-.article-item { padding: 23px 0 24px; border-bottom: 1px solid var(--border); }
-.article-item:first-child { padding-top: 4px; }
-.article-item h2 { font-size: 19px; line-height: 1.6; margin: 0 0 7px; font-weight: 650; }
-.article-item p { font-size: 14px; line-height: 1.85; color: #626a73; margin: 0; overflow-wrap: anywhere; }
-.article-item a { color: var(--text); }
+.article-item { padding: 20px 0 22px; border-bottom: 1px solid var(--border); }
+.article-item:first-child { padding-top: 0; }
+.article-item:last-child { border-bottom: none; }
+.article-item h2 { margin: 0 0 8px; color: var(--heading); font-size: 19px; font-weight: 600; line-height: 1.5; }
+.article-item a { color: var(--heading); overflow-wrap: anywhere; }
 .article-item a:hover { color: var(--link); }
-.back-link { display: inline-block; font-size: 13px; margin-bottom: 22px; }
-.article-head { border-bottom: 1px solid var(--border); padding-bottom: 16px; margin-bottom: 29px; }
-.article-head h1 { line-height: 1.55; font-size: 27px; margin: 0; font-weight: 650; overflow-wrap: anywhere; }
-.article-body { overflow-wrap: anywhere; }
+.article-item p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; overflow-wrap: anywhere; }
+
+.back-link { display: inline-block; margin-bottom: 24px; font-size: 13px; }
+.article-head { margin: 0 0 26px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+.article-head h1 { margin: 0; color: var(--heading); font-size: 26px; line-height: 1.5; overflow-wrap: anywhere; }
+.article-body { overflow-wrap: anywhere; line-height: 1.85; }
 .article-body > :first-child { margin-top: 0; }
-.article-body h2 { font-size: 21px; margin: 2em 0 .65em; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
-.article-body h3 { font-size: 18px; margin: 1.7em 0 .5em; }
+.article-body h2 { margin: 1.8em 0 .7em; padding-bottom: 7px; border-bottom: 1px solid var(--border); color: var(--heading); font-size: 20px; }
+.article-body h3 { margin: 1.5em 0 .6em; color: var(--heading); font-size: 17px; }
+.article-body h4 { margin: 1.4em 0 .5em; color: var(--heading); }
 .article-body p, .article-body ul, .article-body ol { margin: 0 0 1.2em; }
 .article-body ul, .article-body ol { padding-left: 1.8em; }
-.article-body blockquote { border-left: 3px solid #d5dce2; margin: 1.2em 0; padding: .1em 1.2em; color: #606a74; }
-.article-body pre { overflow-x: auto; background: #f6f7f8; padding: 14px 18px; border: 1px solid var(--border); border-radius: 3px; line-height: 1.6; }
-.article-body code { overflow-wrap: anywhere; background: #f5f5f5; padding: .1em .28em; border-radius: 2px; }
-.article-body pre code { background: none; padding: 0; }
-.article-body img { max-width: 100%; height: auto; }
-.article-body table { width: 100%; border-collapse: collapse; display: block; overflow-x: auto; margin: 1.3em 0; }
-.article-body th, .article-body td { border: 1px solid #ddd; padding: 6px 12px; }
-.article-body th { background: #f8f9fa; }
-.memo-text, .plain-body { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; line-height: inherit; }
-.empty, .loading, .error-message { color: var(--muted); font-size: 14px; }
-.edit-link { display: inline-block; font-size: 13px; margin-top: 25px; }
-.create-dialog { max-width: min(92vw, 480px); width: 100%; padding: 25px; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 14px 44px #0002; color: var(--text); }
-.create-dialog::backdrop { background: #0006; }
-.dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.dialog-heading h2 { margin: 0; font-size: 20px; }
-.close-button { border: 0; background: transparent; font-size: 26px; line-height: 1; color: #666; }
-.create-dialog p { margin: 12px 0 18px; font-size: 13px; color: #666; }
-.create-links { display: flex; flex-direction: column; gap: 8px; }
-.create-links a { display: flex; flex-direction: column; gap: 2px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 4px; color: var(--text); }
-.create-links a:hover { border-color: #a4c5de; background: #f7fbfe; text-decoration: none; }
-.create-links strong { font-size: 14px; font-weight: 650; }
-.create-links span { font-size: 12px; color: var(--muted); }
-.create-dialog .dialog-hint { margin: 16px 0 0; line-height: 1.65; }
+.article-body blockquote {
+  margin: 1.1em 0;
+  padding: 4px 0 4px 16px;
+  border-left: 3px solid #484f58;
+  color: var(--muted);
+}
+.article-body pre {
+  margin: 1.2em 0;
+  padding: 14px;
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  line-height: 1.6;
+  overflow-x: auto;
+}
+.article-body code {
+  padding: .08em .32em;
+  font-family: inherit;
+  color: #f0f3ff;
+  background: rgba(255,255,255,.06);
+  border: 1px solid rgba(180,190,210,.22);
+  border-radius: 4px;
+  overflow-wrap: anywhere;
+}
+.article-body pre code { padding: 0; background: transparent; border: 0; }
+.article-body img { display: block; max-width: 100%; height: auto; margin: 16px 0; }
+.article-body table { display: block; width: 100%; margin: 16px 0; overflow-x: auto; border-collapse: collapse; }
+.article-body th, .article-body td { padding: 8px 10px; border: 1px solid var(--border); text-align: left; }
+.article-body th { color: var(--muted); font-weight: normal; background: var(--hover); }
+.article-body hr { border: 0; border-top: 1px solid var(--border); }
+.memo-text, .plain-body {
+  margin: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  line-height: 1.85;
+}
+.empty, .loading, .error-message { color: var(--muted); font-size: 13px; }
+.edit-link { display: inline-block; margin-top: 26px; font-size: 13px; }
+
+/* 操作ダイアログも既存CSSのパネル・ボタン意匠を引き継ぐ。 */
+.create-dialog {
+  width: min(480px, calc(100vw - 28px));
+  max-width: none;
+  padding: 24px;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid #484f58;
+  border-radius: 10px;
+  box-shadow: 0 20px 60px #0008;
+}
+.create-dialog::backdrop { background: #000a; }
+.dialog-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.dialog-heading h2 { margin: 0; color: var(--heading); font-size: 20px; }
+.close-button { padding: 0 4px; color: var(--muted); background: none; border: 0; font-size: 26px; line-height: 1; }
+.close-button:hover { color: var(--heading); }
+.create-dialog p { margin: 12px 0 18px; color: var(--muted); font-size: 13px; }
+.create-links { display: flex; flex-direction: column; gap: 9px; }
+.create-links a {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 11px 13px;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+}
+.create-links a:hover { text-decoration: none; background: var(--hover); border-color: var(--link); }
+.create-links strong { color: var(--heading); font-size: 14px; font-weight: 600; }
+.create-links span { color: var(--muted); font-size: 12px; }
+.create-dialog .dialog-hint { margin: 16px 0 0; color: var(--muted-soft); line-height: 1.65; }
+
 @media (max-width: 760px) {
-  .layout { display: block; }
-  .sidebar { width: 100%; min-height: 0; padding: 17px 18px 12px; border-right: 0; border-bottom: 1px solid var(--border); }
-  .site-title { font-size: 18px; }
+  .layout { display: flex; flex-direction: column; width: min(100% - 24px, 640px); padding: 12px 0 36px; gap: 12px; }
+  .sidebar { position: static; width: 100%; padding: 16px; }
+  .site-title { font-size: 20px; }
   .site-subtitle { display: none; }
-  .create-button { width: auto; padding: 4px 13px; margin: 12px 0 4px; }
-  .navigation { flex-direction: row; gap: 6px; margin-top: 11px; flex-wrap: wrap; }
-  .navigation a { padding: 5px 11px; font-size: 14px; }
-  .main-content { padding: 28px 19px 70px; }
-  .section-heading h1 { font-size: 22px; }
-  .article-head h1 { font-size: 24px; }
+  .create-button { width: auto; margin-top: 14px; padding: 6px 12px; }
+  .navigation { flex-direction: row; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
+  .navigation a { padding: 5px 9px; font-size: 13px; }
+  .main-content { width: 100%; min-height: 320px; padding: 22px 18px 35px; }
+  .section-heading { margin-bottom: 18px; }
+  .section-heading h1 { font-size: 23px; }
+  .article-head h1 { font-size: 23px; }
   .article-item h2 { font-size: 17px; }
+  .create-dialog { padding: 18px; }
 }
