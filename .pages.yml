@@ -1,9 +1,53 @@
-テスト
+# Pages CMS の Configuration に全文を貼り付けて保存しても同じ設定になります。
+# 「Configuration」は記事本文の入力画面ではありません。
+media: media
+content:
+  # メモはタイトルや記事分割のない単一テキストファイル。
+  - name: memo
+    label: メモ
+    type: file
+    path: content/memo.txt
+    format: raw
+    operations:
+      delete: false
+      rename: false
 
-map(int, input().split())
+  - name: notes
+    label: 学習ノート
+    type: collection
+    path: content/notes
+    format: yaml-frontmatter
+    filename: "{year}-{month}-{day}-{hour}-{minute}-{second}-{primary}.md"
+    view:
+      primary: title
+      fields: [title]
+    operations:
+      rename: false
+    fields:
+      - name: title
+        label: 題名
+        type: string
+        required: true
+      - name: body
+        label: 本文
+        type: rich-text
 
-無明、行、識、名色
-
-
-
-な
+  - name: ledger
+    label: 台帳
+    type: collection
+    path: content/ledger
+    format: yaml-frontmatter
+    filename: "{year}-{month}-{day}-{hour}-{minute}-{second}-{primary}.md"
+    view:
+      primary: title
+      fields: [title]
+    operations:
+      rename: false
+    fields:
+      - name: title
+        label: 題名
+        type: string
+        required: true
+      - name: body
+        label: 本文
+        type: rich-text
