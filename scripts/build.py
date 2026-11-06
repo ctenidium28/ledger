@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from datetime import datetime, timezone
 import re
 import shutil
 from pathlib import Path
@@ -53,6 +54,7 @@ def build() -> None:
         shutil.copy2(ROOT / filename, DEST / filename)
     memo_path = CONTENT / "memo.txt"
     payload = {
+        "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "memo": memo_path.read_text(encoding="utf-8-sig") if memo_path.exists() else "",
         "notes": read_collection("notes"),
         "ledger": read_collection("ledger"),
