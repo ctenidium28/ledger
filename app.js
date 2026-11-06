@@ -5,7 +5,6 @@
 (() => {
   "use strict";
   const content = document.querySelector("#content");
-  const dialog = document.querySelector("#create-dialog");
   const navigation = document.querySelectorAll("[data-nav]");
   let data = null;
 
@@ -136,30 +135,18 @@
     else renderNotFound();
   }
 
-  function initDialog() {
-    document.querySelectorAll("[data-open-create]").forEach(button => {
-      button.addEventListener("click", () => dialog.showModal());
-    });
-    document.querySelector("[data-close-dialog]").addEventListener("click", () => dialog.close());
-    document.querySelectorAll("[data-close-on-open]").forEach(a => {
-      a.addEventListener("click", () => dialog.close());
-    });
-    dialog.addEventListener("click", e => {
-      if (e.target === dialog) dialog.close();
-    });
-  }
-
   async function init() {
-    initDialog();
     try {
-      const response = await fetch("./data/index.json", { cache: "no-cache" });
+      // CMS側の編集はGitHub Actionsによる再公開後に反映される。
+      // 古いJSONがブラウザ/CDNに残る可能性を減らすためキャッシュせず取得する。
+      const response = await fetch(`./data/index.json?v=${Date.now()}`, { cache: "no-store" });
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       data = await response.json();
       render();
     } catch (error) {
       console.error("Failed to load content", error);
       content.replaceChildren(heading("データを読み込めませんでした"));
-      content.append(element("p", "error-message", "GitHub Pagesの公開設定、またはデータ生成処理を確認してください。ローカルでは scripts/build.py を実行後、dist/ をHTTPサーバーで表示してください。"));
+      content.append(element("p", "error-message", "data/index.json の取得に失敗しました。GitHubの Settings → Pages → Source を GitHub Actions に設定し、Actions の「Publish knowledge ledger」が成功しているか確認してください。"));
     }
   }
 
