@@ -73,6 +73,7 @@ button { cursor: pointer; }
   background: var(--primary);
   border: 1px solid var(--primary-border);
   border-radius: 6px;
+  margin-top: 10px;
 }
 .create-button:hover { background: var(--primary-border); }
 .navigation { display: flex; flex-direction: column; gap: 3px; margin-top: 18px; }
