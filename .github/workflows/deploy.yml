@@ -1,0 +1,50 @@
+name: Publish knowledge ledger
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r requirements.txt
+      - name: Generate public JSON from CMS content
+        run: |
+          python scripts/build.py
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = json.loads(Path('dist/data/index.json').read_text(encoding='utf-8'))
+          print('Public JSON generated:', p['generated_at'])
+          print('Memo characters:', len(p['memo']))
+          print('Notes:', len(p['notes']), 'Ledger:', len(p['ledger']))
+          PY
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
