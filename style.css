@@ -64,18 +64,19 @@ button { cursor: pointer; }
   line-height: 1.4;
 }
 .site-title:hover { color: var(--heading); text-decoration: none; }
-.site-subtitle { color: var(--muted); font-size: 12px; margin: 6px 0 23px; }
 .create-button {
+  display: block;
   width: 100%;
+  margin-top: 10px;
   padding: 9px 12px;
+  text-decoration: none;
   text-align: center;
   color: #fff;
   background: var(--primary);
   border: 1px solid var(--primary-border);
   border-radius: 6px;
-  margin-top: 10px;
 }
-.create-button:hover { background: var(--primary-border); }
+.create-button:hover, .create-button:focus-visible { background: var(--primary-border); text-decoration: none; }
 .navigation { display: flex; flex-direction: column; gap: 3px; margin-top: 18px; }
 .navigation a {
   display: block;
@@ -171,45 +172,11 @@ button { cursor: pointer; }
 .empty, .loading, .error-message { color: var(--muted); font-size: 13px; }
 .edit-link { display: inline-block; margin-top: 26px; font-size: 13px; }
 
-/* 操作ダイアログも既存CSSのパネル・ボタン意匠を引き継ぐ。 */
-.create-dialog {
-  width: min(480px, calc(100vw - 28px));
-  max-width: none;
-  padding: 24px;
-  color: var(--text);
-  background: var(--panel);
-  border: 1px solid #484f58;
-  border-radius: 10px;
-  box-shadow: 0 20px 60px #0008;
-}
-.create-dialog::backdrop { background: #000a; }
-.dialog-heading { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
-.dialog-heading h2 { margin: 0; color: var(--heading); font-size: 20px; }
-.close-button { padding: 0 4px; color: var(--muted); background: none; border: 0; font-size: 26px; line-height: 1; }
-.close-button:hover { color: var(--heading); }
-.create-dialog p { margin: 12px 0 18px; color: var(--muted); font-size: 13px; }
-.create-links { display: flex; flex-direction: column; gap: 9px; }
-.create-links a {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 11px 13px;
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--background);
-}
-.create-links a:hover { text-decoration: none; background: var(--hover); border-color: var(--link); }
-.create-links strong { color: var(--heading); font-size: 14px; font-weight: 600; }
-.create-links span { color: var(--muted); font-size: 12px; }
-.create-dialog .dialog-hint { margin: 16px 0 0; color: var(--muted-soft); line-height: 1.65; }
-
 @media (max-width: 760px) {
   .layout { display: flex; flex-direction: column; width: min(100% - 24px, 640px); padding: 12px 0 36px; gap: 12px; }
   .sidebar { position: static; width: 100%; padding: 16px; }
   .site-title { font-size: 20px; }
-  .site-subtitle { display: none; }
-  .create-button { width: auto; margin-top: 14px; padding: 6px 12px; }
+  .create-button { width: auto; padding: 6px 12px; }
   .navigation { flex-direction: row; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
   .navigation a { padding: 5px 9px; font-size: 13px; }
   .main-content { width: 100%; min-height: 320px; padding: 22px 18px 35px; }
