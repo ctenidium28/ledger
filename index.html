@@ -15,7 +15,7 @@
   <div class="layout">
     <aside class="sidebar" aria-label="サイトメニュー">
       <a class="site-title" href="#/ledger">知識台帳</a>
-      <button class="create-button" type="button" data-open-create>＋ 新規作成</button>
+      <a class="create-button" href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer">＋ 新規作成</a>
       <nav class="navigation" aria-label="ページ移動">
         <a href="#/memo" data-nav="memo">メモ</a>
         <a href="#/notes" data-nav="notes">学習ノート</a>
@@ -28,24 +28,5 @@
     </main>
   </div>
 
-  <dialog id="create-dialog" class="create-dialog" aria-labelledby="create-dialog-title">
-    <div class="dialog-heading">
-      <h2 id="create-dialog-title">新規作成・編集</h2>
-      <button class="close-button" type="button" data-close-dialog aria-label="閉じる">×</button>
-    </div>
-    <p>保存先を選択してください。編集画面は Pages CMS で開きます。</p>
-    <div class="create-links">
-      <a href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer" data-close-on-open>
-        <strong>メモを編集</strong><span>「メモ」を選択して1つのテキストを更新</span>
-      </a>
-      <a href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer" data-close-on-open>
-        <strong>学習ノートの記事を追加</strong><span>「学習ノート」→「新規作成」</span>
-      </a>
-      <a href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer" data-close-on-open>
-        <strong>台帳の記事を追加</strong><span>「台帳」→「新規作成」</span>
-      </a>
-    </div>
-    <p class="dialog-hint">初回はGitHubログインとリポジトリの選択が必要です。Pages CMSで保存すると、GitHub Pagesへ自動反映されます。</p>
-  </dialog>
 </body>
 </html>
