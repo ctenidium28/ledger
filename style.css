@@ -35,7 +35,7 @@ body {
   background: var(--background);
   color: var(--text);
   font-family: "Envy Code B", ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
-  font-size: 60px;
+  font-size: 19px;
   line-height: 1.7;
 }
 button, input, textarea { font: inherit; }
@@ -136,8 +136,8 @@ button { cursor: pointer; }
 .article-head h1 { margin: 0; color: var(--heading); font-size: 26px; line-height: 1.5; overflow-wrap: anywhere; }
 .article-body { overflow-wrap: anywhere; line-height: 1.85; }
 .article-body > :first-child { margin-top: 0; }
-.article-body h2 { margin: 1.8em 0 .7em; padding-bottom: 7px; border-bottom: 1px solid var(--border); color: var(--heading); font-size: 20px; }
-.article-body h3 { margin: 1.5em 0 .6em; color: var(--heading); font-size: 17px; }
+.article-body h2 { margin: 1.8em 0 .7em; padding-bottom: 7px; border-bottom: 1px solid var(--border); color: var(--heading); font-size: 28px; }
+.article-body h3 { margin: 1.5em 0 .6em; color: var(--heading); font-size: 24px; }
 .article-body h4 { margin: 1.4em 0 .5em; color: var(--heading); }
 .article-body p, .article-body ul, .article-body ol { margin: 0 0 1.2em; }
 .article-body ul, .article-body ol { padding-left: 1.8em; }
