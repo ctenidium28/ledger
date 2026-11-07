@@ -1,3 +1,12 @@
+/* コードブロック専用フォント。font/ 以下にファイルを配置すると適用される。 */
+@font-face {
+  font-family: "Ledger Code Font";
+  src: url("./font/Envy%20Code%20B%2010pt.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 /*
  * 知識台帳 — ctenidium28 の既存CSSを参考にしたダークテーマ。
  * 色彩: body #0d1117 / panel #161b22 / border #30363d
@@ -157,6 +166,12 @@ button { cursor: pointer; }
   overflow-wrap: anywhere;
 }
 .article-body pre code { padding: 0; background: transparent; border: 0; }
+/* Markdownのフェンス付きコードブロックにのみ独自フォントを適用。 */
+.article-body pre,
+.article-body pre code {
+  font-family: "Ledger Code Font", ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+
 .article-body img { display: block; max-width: 100%; height: auto; margin: 16px 0; }
 .article-body table { display: block; width: 100%; margin: 16px 0; overflow-x: auto; border-collapse: collapse; }
 .article-body th, .article-body td { padding: 8px 10px; border: 1px solid var(--border); text-align: left; }
@@ -185,4 +200,11 @@ button { cursor: pointer; }
   .article-head h1 { font-size: 23px; }
   .article-item h2 { font-size: 17px; }
   .create-dialog { padding: 18px; }
+}
+
+/* 長い独立数式が記事幅を超える場合に横スクロール可能にする。 */
+.article-body .katex-display {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
 }
