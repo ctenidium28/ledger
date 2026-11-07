@@ -8,6 +8,12 @@
   const navigation = document.querySelectorAll("[data-nav]");
   let data = null;
 
+  // MarkedにKaTeX拡張を一度だけ登録する。数式のコードブロックは解析しない。
+  // 拡張が読み込めない場合も、記事本文は従来どおり表示する。
+  if (window.marked?.use && typeof window.markedKatex === "function" && window.katex) {
+    window.marked.use(window.markedKatex({ throwOnError: false }));
+  }
+
   function element(tag, className, text) {
     const el = document.createElement(tag);
     if (className) el.className = className;
