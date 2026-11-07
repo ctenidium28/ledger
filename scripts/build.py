@@ -52,6 +52,10 @@ def build() -> None:
     (DEST / "data").mkdir(exist_ok=True)
     for filename in ["index.html", "style.css", "app.js"]:
         shutil.copy2(ROOT / filename, DEST / filename)
+    # 独自フォントを後から追加してもPagesの公開成果物へ含める。
+    font_dir = ROOT / "font"
+    if font_dir.is_dir():
+        shutil.copytree(font_dir, DEST / "font", dirs_exist_ok=True)
     memo_path = CONTENT / "memo.txt"
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
