@@ -37,3 +37,10 @@
 
 
 TuringComplete + shapez
+
+
+
+CPU - アセンブリ - 低級言語 - 高級言語
+NANDtoCPUが終わったら、低級言語を勉強してみたい
+C, C++, FORTRANあたり？
+前提知識としてNANDtoCPUとpythonがあるからそれを有効活用
