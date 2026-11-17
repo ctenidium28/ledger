@@ -32,7 +32,8 @@
 
 
 
-正規表現, SQLite, YAML追加
+正規表現, SQLite, YAML, pythonのファイル操作
+追加
 
 
 
