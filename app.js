@@ -67,6 +67,17 @@
     document.title = "メモ | 知識台帳";
   }
 
+  // 公開用JSONのタグを、一般的なハッシュタグ風のラベルとして表示する。
+  function renderTags(entry) {
+    if (!Array.isArray(entry.tags) || !entry.tags.length) return null;
+    const tags = element("div", "article-tags");
+    for (const tag of entry.tags) {
+      if (typeof tag !== "string") continue;
+      tags.append(element("span", "article-tag", `#${tag}`));
+    }
+    return tags.childElementCount ? tags : null;
+  }
+
   function renderCollection(section) {
     const sectionTitle = section === "notes" ? "学習ノート" : "台帳";
     const entries = data[section] || [];
@@ -82,6 +93,8 @@
         anchor.href = linkTo(section, entry.id);
         title.append(anchor);
         item.append(title, element("p", "", entry.excerpt || ""));
+        const tags = renderTags(entry);
+        if (tags) item.append(tags);
         list.append(item);
       }
       content.append(list);
@@ -193,6 +206,8 @@
     back.href = `#/${section}`;
     const head = element("header", "article-head");
     head.append(element("h1", "", entry.title));
+    const tags = renderTags(entry);
+    if (tags) head.append(tags);
     content.replaceChildren(back, head, renderMarkdown(entry.body));
     const assets = renderAssets(entry);
     if (assets) content.append(assets);
