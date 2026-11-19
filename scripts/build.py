@@ -15,6 +15,14 @@ DEST = ROOT / "dist"
 CONTENT = ROOT / "content"
 FRONTMATTER = re.compile(r"\A---\s*\r?\n(.*?)\r?\n---\s*\r?\n(.*)\Z", re.S)
 
+# 執筆と加筆の出自は、許可された4パターンだけを採用する。
+ATTRIBUTION_TAGS = {
+    "human": ["ユーザー執筆"],
+    "llm": ["LLM生成"],
+    "human_llm": ["ユーザー執筆", "LLM加筆"],
+    "llm_human": ["LLM生成", "ユーザー加筆"],
+}
+
 
 def excerpt(body: str, limit: int = 100) -> str:
     """Markdownを一覧向けの短い文章にする（完全なMarkdown解析は不要）。"""
@@ -48,7 +56,16 @@ def read_collection(section: str) -> list[dict]:
         if not isinstance(metadata, dict) or not str(metadata.get("title", "")).strip():
             raise ValueError(f"titleがありません: {path.relative_to(ROOT)}")
         body = match.group(2).strip()
+        attribution = metadata.get("attribution")
+        if "attribution" not in metadata:
+            # 導入前の既存記事は、執筆主体を勝手に推定しない。
+            tags = []
+        elif isinstance(attribution, str) and attribution in ATTRIBUTION_TAGS:
+            tags = ATTRIBUTION_TAGS[attribution]
+        else:
+            raise ValueError(f"不正な執筆・加筆タグ: {path.relative_to(ROOT)}: {attribution!r}")
         results.append({
+            "tags": tags,
             "id": path.stem,
             "title": str(metadata["title"]).strip(),
             "excerpt": excerpt(body),
