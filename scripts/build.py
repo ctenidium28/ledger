@@ -26,6 +26,16 @@ def excerpt(body: str, limit: int = 100) -> str:
     return text[:limit] + ("…" if len(text) > limit else "")
 
 
+def media_fields(metadata: dict, name: str) -> list[str]:
+    """CMSで指定した画像・添付ファイルのパスを配列に統一する。"""
+    value = metadata.get(name) or []
+    if isinstance(value, str):
+        value = [value]
+    if not isinstance(value, list):
+        return []
+    return [item.strip() for item in value if isinstance(item, str) and item.strip()]
+
+
 def read_collection(section: str) -> list[dict]:
     directory = CONTENT / section
     results = []
@@ -43,6 +53,8 @@ def read_collection(section: str) -> list[dict]:
             "title": str(metadata["title"]).strip(),
             "excerpt": excerpt(body),
             "body": body,
+            "images": media_fields(metadata, "images"),
+            "attachments": media_fields(metadata, "attachments"),
         })
     return results
 
@@ -56,6 +68,10 @@ def build() -> None:
     font_dir = ROOT / "font"
     if font_dir.is_dir():
         shutil.copytree(font_dir, DEST / "font", dirs_exist_ok=True)
+    # CMSでアップロードされた画像・ファイルもGitHub Pagesへ配置する。
+    media_dir = ROOT / "media"
+    if media_dir.is_dir():
+        shutil.copytree(media_dir, DEST / "media", dirs_exist_ok=True)
     memo_path = CONTENT / "memo.txt"
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
