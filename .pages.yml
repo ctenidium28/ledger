@@ -35,9 +35,9 @@ content:
         required: true
       - name: body
         label: 本文
-        type: rich-text
+        type: code
         options:
-          switcher: true
+          format: markdown
           extensions: [png, jpg, jpeg, gif, webp]
       - name: images
         label: 添付画像（任意）
@@ -72,9 +72,9 @@ content:
         required: true
       - name: body
         label: 本文
-        type: rich-text
+        type: code
         options:
-          switcher: true
+          format: markdown
           extensions: [png, jpg, jpeg, gif, webp]
       - name: images
         label: 添付画像（任意）
