@@ -90,6 +90,82 @@
     document.title = `${sectionTitle} | 知識台帳`;
   }
 
+  // Pages CMS が $$ の行末に付けた空白を除去する。
+  // フェンス付きコードブロック内は数式ではないため変更しない。
+  function normalizeMathDelimiters(source) {
+    let fence = null;
+    return source.split(/\r?\n/).map(line => {
+      const match = line.match(/^ {0,3}(`{3,}|~{3,})(.*)$/);
+      if (match) {
+        const marker = match[1][0];
+        if (fence === null) fence = { marker, count: match[1].length };
+        else if (fence.marker === marker && match[1].length >= fence.count && !match[2].trim()) fence = null;
+        return line;
+      }
+      return fence === null && /^ {0,3}\$\$[ \t]*$/.test(line) ? line.trimEnd() : line;
+    }).join("\n");
+  }
+
+  // CMS の画像・添付ファイル欄に保存されたパスをURLにする。
+  // javascript: 等は許さない。
+  function mediaUrl(raw) {
+    if (typeof raw !== "string" || !raw.trim()) return null;
+    try {
+      const url = new URL(raw, window.location.href);
+      return ["http:", "https:"].includes(url.protocol) ? url.href : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function renderAssets(entry) {
+    const container = element("div", "article-assets");
+    const images = Array.isArray(entry.images) ? entry.images : [];
+    const attachments = Array.isArray(entry.attachments) ? entry.attachments : [];
+    const validImages = images.map(mediaUrl).filter(Boolean);
+    const validFiles = attachments.map(mediaUrl).filter(Boolean);
+
+    if (validImages.length) {
+      const section = element("section", "article-asset-section");
+      section.append(element("h2", "", "添付画像"));
+      const gallery = element("div", "article-image-gallery");
+      validImages.forEach((url, i) => {
+        const a = element("a");
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        const img = element("img");
+        img.src = url;
+        img.alt = `${entry.title} の添付画像 ${i + 1}`;
+        img.loading = "lazy";
+        a.append(img);
+        gallery.append(a);
+      });
+      section.append(gallery);
+      container.append(section);
+    }
+    if (validFiles.length) {
+      const section = element("section", "article-asset-section");
+      section.append(element("h2", "", "添付ファイル"));
+      const list = element("ul", "article-attachment-list");
+      validFiles.forEach(url => {
+        const a = element("a");
+        a.href = url;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        const name = new URL(url).pathname.split("/").pop() || "添付ファイル";
+        try { a.textContent = decodeURIComponent(name); }
+        catch { a.textContent = name; }
+        const li = element("li");
+        li.append(a);
+        list.append(li);
+      });
+      section.append(list);
+      container.append(section);
+    }
+    return container.childElementCount ? container : null;
+  }
+
   function renderMarkdown(body) {
     const wrapper = element("div", "article-body");
     // CDNが使えない場合はプレーンテキストで表示し、外部ライブラリ不達でも内容を失わない。
@@ -97,7 +173,7 @@
       wrapper.append(element("div", "plain-body", body));
       return wrapper;
     }
-    const untrustedHtml = window.marked.parse(body, { gfm: true, breaks: true });
+    const untrustedHtml = window.marked.parse(normalizeMathDelimiters(body), { gfm: true, breaks: true });
     wrapper.innerHTML = window.DOMPurify.sanitize(untrustedHtml);
     wrapper.querySelectorAll("a").forEach(a => {
       if (a.href.startsWith("http:" ) || a.href.startsWith("https:")) {
@@ -118,6 +194,8 @@
     const head = element("header", "article-head");
     head.append(element("h1", "", entry.title));
     content.replaceChildren(back, head, renderMarkdown(entry.body));
+    const assets = renderAssets(entry);
+    if (assets) content.append(assets);
     content.append(cmsLink("この記事を編集する（Pages CMS）"));
     updateNavigation(section);
     document.title = `${entry.title} | 知識台帳`;
