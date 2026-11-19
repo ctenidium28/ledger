@@ -137,6 +137,22 @@ button { cursor: pointer; }
 .article-item a:hover { color: var(--link); }
 .article-item p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.75; overflow-wrap: anywhere; }
 
+/* 初稿・加筆ラベル。一般的なハッシュタグに倣ったコンパクトな表示。 */
+.article-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.article-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--hover);
+  color: var(--link);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
 .back-link { display: inline-block; margin-bottom: 24px; font-size: 13px; }
 .article-head { margin: 0 0 26px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
 .article-head h1 { margin: 0; color: var(--heading); font-size: 26px; line-height: 1.5; overflow-wrap: anywhere; }
