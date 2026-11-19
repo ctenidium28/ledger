@@ -26,6 +26,10 @@
   --selected: #30363d;
   --primary: #238636;
   --primary-border: #2ea043;
+  /* 左側メニューの文字サイズ：ここを調整 */
+  --sidebar-title-font-size: 22px;
+  --sidebar-create-font-size: 19px;
+  --sidebar-nav-font-size: 19px;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -67,7 +71,7 @@ button { cursor: pointer; }
 .site-title {
   display: block;
   color: var(--heading);
-  font-size: 22px;
+  font-size: var(--sidebar-title-font-size);
   font-weight: 700;
   letter-spacing: .01em;
   line-height: 1.4;
@@ -77,6 +81,7 @@ button { cursor: pointer; }
   display: block;
   width: 100%;
   margin-top: 10px;
+  font-size: var(--sidebar-create-font-size);
   padding: 9px 12px;
   text-decoration: none;
   text-align: center;
@@ -90,6 +95,7 @@ button { cursor: pointer; }
 .navigation a {
   display: block;
   padding: 7px 10px;
+  font-size: var(--sidebar-nav-font-size);
   color: var(--text);
   border: 1px solid transparent;
   border-radius: 6px;
@@ -174,7 +180,7 @@ button { cursor: pointer; }
 
 .article-body img { display: block; max-width: 100%; height: auto; margin: 16px 0; }
 .article-body table { display: block; width: 100%; margin: 16px 0; overflow-x: auto; border-collapse: collapse; }
-.article-body th, .article-body td { padding: 8px 10px; border: 1px solid var(--border); text-align: left; }
+.article-body th, .article-body td { padding: 8px 10px; border: 2px solid #484f58; text-align: left; }
 .article-body th { color: var(--muted); font-weight: normal; background: var(--hover); }
 .article-body hr { border: 0; border-top: 1px solid var(--border); }
 .memo-text, .plain-body {
@@ -188,12 +194,15 @@ button { cursor: pointer; }
 .edit-link { display: inline-block; margin-top: 26px; font-size: 13px; }
 
 @media (max-width: 760px) {
+  :root {
+    --sidebar-title-font-size: 20px;
+    --sidebar-nav-font-size: 13px;
+  }
   .layout { display: flex; flex-direction: column; width: min(100% - 24px, 640px); padding: 12px 0 36px; gap: 12px; }
   .sidebar { position: static; width: 100%; padding: 16px; }
-  .site-title { font-size: 20px; }
   .create-button { width: auto; padding: 6px 12px; }
   .navigation { flex-direction: row; flex-wrap: wrap; gap: 5px; margin-top: 12px; }
-  .navigation a { padding: 5px 9px; font-size: 13px; }
+  .navigation a { padding: 5px 9px; }
   .main-content { width: 100%; min-height: 320px; padding: 22px 18px 35px; }
   .section-heading { margin-bottom: 18px; }
   .section-heading h1 { font-size: 23px; }
@@ -208,3 +217,12 @@ button { cursor: pointer; }
   overflow-y: hidden;
   max-width: 100%;
 }
+
+/* Pages CMS の画像・ファイル欄に登録した添付データ */
+.article-assets { margin-top: 30px; }
+.article-asset-section { margin-top: 22px; }
+.article-asset-section h2 { margin: 0 0 12px; color: var(--heading); font-size: 18px; }
+.article-image-gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 12px; }
+.article-image-gallery img { display: block; max-width: 100%; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; }
+.article-attachment-list { margin: 0; padding-left: 1.6em; overflow-wrap: anywhere; }
+.article-attachment-list li { margin: 5px 0; }
