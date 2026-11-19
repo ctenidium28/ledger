@@ -1,6 +1,11 @@
 # Pages CMS の Configuration に全文を貼り付けて保存しても同じ設定になります。
 # 「Configuration」は記事本文の入力画面ではありません。
-media: media
+# 公開URLはGitHub Pagesのプロジェクトサイト /ledger/ に対応。
+# 独自ドメインへの移行時は output を調整してください。
+media:
+  input: media
+  output: /ledger/media
+  rename: safe
 content:
   # メモはタイトルや記事分割のない単一テキストファイル。
   - name: memo
@@ -31,6 +36,23 @@ content:
       - name: body
         label: 本文
         type: rich-text
+        options:
+          switcher: true
+          extensions: [png, jpg, jpeg, gif, webp]
+      - name: images
+        label: 添付画像（任意）
+        type: image
+        options:
+          multiple:
+            max: 12
+          extensions: [png, jpg, jpeg, gif, webp]
+      - name: attachments
+        label: 添付ファイル（任意）
+        type: file
+        options:
+          multiple:
+            max: 12
+          extensions: [pdf, circ, zip, txt, md, json, csv, py, log]
 
   - name: ledger
     label: 台帳
@@ -51,3 +73,20 @@ content:
       - name: body
         label: 本文
         type: rich-text
+        options:
+          switcher: true
+          extensions: [png, jpg, jpeg, gif, webp]
+      - name: images
+        label: 添付画像（任意）
+        type: image
+        options:
+          multiple:
+            max: 12
+          extensions: [png, jpg, jpeg, gif, webp]
+      - name: attachments
+        label: 添付ファイル（任意）
+        type: file
+        options:
+          multiple:
+            max: 12
+          extensions: [pdf, circ, zip, txt, md, json, csv, py, log]
