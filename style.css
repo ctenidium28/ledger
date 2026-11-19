@@ -27,9 +27,9 @@
   --primary: #238636;
   --primary-border: #2ea043;
   /* 左側メニューの文字サイズ：ここを調整 */
-  --sidebar-title-font-size: 25px;
-  --sidebar-create-font-size: 15px;
-  --sidebar-nav-font-size: 18px;
+  --sidebar-title-font-size: 30px;
+  --sidebar-create-font-size: 12px;
+  --sidebar-nav-font-size: 15px;
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
