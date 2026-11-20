@@ -3,45 +3,72 @@
   "nodes": [
     {
       "id": "g-mwolwtaw-87v3aa6",
-      "x": 62.13774871826172,
-      "y": 244.29074096679688,
       "label": "快",
       "description": "",
+      "x": 62.13774871826172,
+      "y": 244.29074096679688,
       "size": 150,
       "color": "#58a6ff"
     },
     {
       "id": "g-mwolxste-apdcuab",
-      "x": 548.8623352050781,
-      "y": 374.9162902832031,
       "label": "苦苦",
       "description": "",
+      "x": 548.8623352050781,
+      "y": 374.9162902832031,
       "size": 150,
       "color": "#58a6ff"
     },
     {
       "id": "g-mwoly34m-1qxdqmi",
-      "x": 542.9996643066406,
-      "y": 256.974365234375,
       "label": "壊苦",
       "description": "",
+      "x": 542.9996643066406,
+      "y": 256.974365234375,
       "size": 150,
       "color": "#58a6ff"
     },
     {
       "id": "g-mwolyr35-hcjdgzd",
-      "x": 750.9912872314453,
-      "y": 262.13706970214844,
       "label": "行苦",
       "description": "",
+      "x": 750.9912872314453,
+      "y": 262.13706970214844,
       "size": 150,
       "color": "#58a6ff"
     },
     {
       "id": "g-mwom1jgi-00j1uvp",
+      "label": "執着",
+      "description": "",
       "x": 308.4005889892578,
       "y": 488.11553955078125,
-      "label": "執着",
+      "size": 150,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "g-mwooshgt-j2yrnd6",
+      "x": 77.52592468261719,
+      "y": 723.3670654296875,
+      "label": "卑しい探求",
+      "description": "",
+      "size": 150,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "g-mwoot0lh-ifb5us7",
+      "x": 357.3367614746094,
+      "y": 716.9313354492188,
+      "label": "欲望の二重の一致",
+      "description": "",
+      "size": 150,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "g-mwootal9-i0uwd6i",
+      "x": 630.4041442871094,
+      "y": 722.3464965820312,
+      "label": "異星人との交流がない",
       "description": "",
       "size": 150,
       "color": "#58a6ff"
@@ -69,6 +96,22 @@
       "from": "g-mwom1jgi-00j1uvp",
       "to": "g-mwolxste-apdcuab",
       "type": "directed",
+      "label": "",
+      "waypoints": []
+    },
+    {
+      "id": "g-mwootz13-sqrnaxy",
+      "from": "g-mwooshgt-j2yrnd6",
+      "to": "g-mwoot0lh-ifb5us7",
+      "type": "undirected",
+      "label": "",
+      "waypoints": []
+    },
+    {
+      "id": "g-mwoou0xn-b35on6k",
+      "from": "g-mwoot0lh-ifb5us7",
+      "to": "g-mwootal9-i0uwd6i",
+      "type": "undirected",
       "label": "",
       "waypoints": []
     }
