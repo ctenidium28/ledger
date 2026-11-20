@@ -1,6 +1,88 @@
 {
   "version": 1,
-  "nodes": [],
-  "edges": [],
-  "groups": []
+  "nodes": [
+    {
+      "id": "g-mwolwtaw-87v3aa6",
+      "x": 62.13774871826172,
+      "y": 244.29074096679688,
+      "label": "快",
+      "description": "",
+      "size": 150,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "g-mwolxste-apdcuab",
+      "x": 548.8623352050781,
+      "y": 374.9162902832031,
+      "label": "苦苦",
+      "description": "",
+      "size": 150,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "g-mwoly34m-1qxdqmi",
+      "x": 542.9996643066406,
+      "y": 256.974365234375,
+      "label": "壊苦",
+      "description": "",
+      "size": 150,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "g-mwolyr35-hcjdgzd",
+      "x": 750.9912872314453,
+      "y": 262.13706970214844,
+      "label": "行苦",
+      "description": "",
+      "size": 150,
+      "color": "#58a6ff"
+    },
+    {
+      "id": "g-mwom1jgi-00j1uvp",
+      "x": 308.4005889892578,
+      "y": 488.11553955078125,
+      "label": "執着",
+      "description": "",
+      "size": 150,
+      "color": "#58a6ff"
+    }
+  ],
+  "edges": [
+    {
+      "id": "g-mwolzk8x-1t7e3cy",
+      "from": "g-mwolwtaw-87v3aa6",
+      "to": "g-mwoly34m-1qxdqmi",
+      "type": "directed",
+      "label": "",
+      "waypoints": []
+    },
+    {
+      "id": "g-mwom1yz3-1nattty",
+      "from": "g-mwolwtaw-87v3aa6",
+      "to": "g-mwom1jgi-00j1uvp",
+      "type": "directed",
+      "label": "",
+      "waypoints": []
+    },
+    {
+      "id": "g-mwom2863-nlfea5q",
+      "from": "g-mwom1jgi-00j1uvp",
+      "to": "g-mwolxste-apdcuab",
+      "type": "directed",
+      "label": "",
+      "waypoints": []
+    }
+  ],
+  "groups": [
+    {
+      "id": "g-mwolz8g6-gky01wh",
+      "name": "苦",
+      "color": "#8b5cf6",
+      "nodeIds": [
+        "g-mwoly34m-1qxdqmi",
+        "g-mwolxste-apdcuab",
+        "g-mwolyr35-hcjdgzd"
+      ]
+    }
+  ]
 }
