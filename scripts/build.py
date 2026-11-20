@@ -79,7 +79,7 @@ def read_collection(section: str) -> list[dict]:
 def build() -> None:
     DEST.mkdir(parents=True, exist_ok=True)
     (DEST / "data").mkdir(exist_ok=True)
-    for filename in ["index.html", "style.css", "app.js"]:
+    for filename in ["index.html", "style.css", "app.js", "graph.html", "graph.css", "graph.js"]:
         shutil.copy2(ROOT / filename, DEST / filename)
     # 独自フォントを後から追加してもPagesの公開成果物へ含める。
     font_dir = ROOT / "font"
@@ -98,6 +98,14 @@ def build() -> None:
     }
     (DEST / "data" / "index.json").write_text(
         json.dumps(payload, ensure_ascii=False, separators=(",", ":")), encoding="utf-8"
+    )
+    # グラフは記事と独立した原本。公開JSONとしてそのまま配信する。
+    graph_source = CONTENT / "graph.json"
+    graph_data = json.loads(graph_source.read_text(encoding="utf-8"))
+    if not isinstance(graph_data, dict) or not all(isinstance(graph_data.get(k), list) for k in ("nodes", "edges", "groups")):
+        raise ValueError("content/graph.json の構造が不正です")
+    (DEST / "data" / "graph.json").write_text(
+        json.dumps(graph_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     (DEST / ".nojekyll").touch()
     print(f"Build OK: メモ / 学習ノート {len(payload['notes'])} 件 / 台帳 {len(payload['ledger'])} 件")

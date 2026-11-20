@@ -242,3 +242,20 @@ button { cursor: pointer; }
 .article-image-gallery img { display: block; max-width: 100%; width: 100%; height: auto; border: 1px solid var(--border); border-radius: 6px; }
 .article-attachment-list { margin: 0; padding-left: 1.6em; overflow-wrap: anywhere; }
 .article-attachment-list li { margin: 5px 0; }
+
+/* 同一台帳内の記事リンクをクリックしたときだけ現れるインライン参照。 */
+.article-reference { display: inline; }
+.article-reference-heading { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.article-reference-title { color: var(--heading); font-weight: 600; }
+.article-reference-close {
+  padding: 1px 7px; border-radius: 4px; border: 1px solid var(--border);
+  background: var(--hover); color: var(--link); font: inherit; font-size: .72em; cursor: pointer;
+}
+.article-reference-panel {
+  display: block; margin: 10px 0 15px; padding: 14px 17px;
+  background: var(--background); border-left: 3px solid var(--link);
+  border-radius: 0 7px 7px 0; font-size: .9em;
+  max-height: 75vh; overflow-y: auto; overflow-x: auto;
+}
+.article-reference-panel .article-body { font-size: 1em; }
+.article-reference-panel .article-tags { margin: 0 0 10px; }

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>グラフ | 知識台帳</title>
+  <link rel="stylesheet" href="./style.css">
+  <link rel="stylesheet" href="./graph.css">
+  <script defer src="./graph.js"></script>
+</head>
+<body class="graph-page">
+  <div class="layout graph-layout">
+    <aside class="sidebar" aria-label="サイトメニュー">
+      <a class="site-title" href="./index.html#/ledger">知識台帳</a>
+      <a class="create-button" href="https://app.pagescms.org/" target="_blank" rel="noopener noreferrer">＋ 新規作成</a>
+      <nav class="navigation" aria-label="ページ移動">
+        <a href="./index.html#/memo">メモ</a>
+        <a href="./index.html#/notes">学習ノート</a>
+        <a href="./index.html#/ledger">台帳</a>
+        <a href="./graph.html" aria-current="page">グラフ</a>
+      </nav>
+    </aside>
+    <main class="main-content graph-main">
+      <div class="graph-heading">
+        <h1>知識グラフ <span class="graph-beta">試験版</span></h1>
+        <p>Ctrl＋クリックで複数選択／ドラッグで移動。ホイールで拡大縮小、背景ドラッグで画面移動できます。</p>
+      </div>
+      <div class="graph-toolbar" aria-label="グラフ操作">
+        <button id="graph-add-node" type="button">＋ ノード</button>
+        <button id="graph-connect" type="button">＋ エッジ</button>
+        <button id="graph-add-group" type="button">＋ グループ</button>
+        <button id="graph-delete" type="button">選択を削除</button>
+        <button id="graph-view" type="button">表示位置を戻す</button>
+      </div>
+      <div class="graph-workspace">
+        <div class="graph-surface"><svg id="graph-canvas" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 760" role="img" aria-label="編集可能な知識グラフ"></svg></div>
+        <aside class="graph-inspector" aria-label="選択要素の設定"><h2>プロパティ</h2><div id="graph-inspector"></div></aside>
+      </div>
+      <div class="graph-file-toolbar">
+        <button type="button" id="graph-save">ブラウザに保存</button>
+        <button type="button" id="graph-export">JSONを書き出す</button>
+        <label class="graph-import-label">JSONを読み込む <input type="file" id="graph-import" accept=".json,application/json"></label>
+        <button type="button" id="graph-reset">公開版に戻す</button>
+        <button type="button" id="graph-publish">GitHubで公開する</button>
+      </div>
+      <p id="graph-status" class="graph-status" role="status" aria-live="polite">公開データを読み込み中です。</p>
+      <p class="graph-help">編集はこのブラウザに自動保存されます。他の端末・閲覧者と共有するには「GitHubで公開する」でJSONをコピーしてGitHub上に貼り付け、コミットしてください。公開ページにはGitHub Actionsによる再デプロイ後に反映されます。秘密情報は登録しないでください。</p>
+    </main>
+  </div>
+</body>
+</html>

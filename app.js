@@ -179,6 +179,56 @@
     return container.childElementCount ? container : null;
   }
 
+  // 明示的な同サイト記事リンクだけ展開する。その他のリンクは従来どおり。
+  function resolveArticleReference(anchor) {
+    let url;
+    try { url = new URL(anchor.getAttribute("href"), window.location.href); }
+    catch { return null; }
+    let section, id, match;
+    if (url.hostname === "github.com") {
+      match = url.pathname.match(/^\/ctenidium28\/ledger\/blob\/[^/]+\/content\/(notes|ledger)\/(.+)\.md$/);
+      if (match) { section = match[1]; id = match[2]; }
+    } else if (url.hostname === "raw.githubusercontent.com") {
+      match = url.pathname.match(/^\/ctenidium28\/ledger\/[^/]+\/content\/(notes|ledger)\/(.+)\.md$/);
+      if (match) { section = match[1]; id = match[2]; }
+    } else if (url.origin === window.location.origin && /\/(?:index\.html)?$/.test(url.pathname)) {
+      match = url.hash.match(/^#\/article\/(notes|ledger)\/([^/?#]+)/);
+      if (match) { section = match[1]; id = match[2]; }
+    }
+    if (!section || !id) return null;
+    try { id = decodeURIComponent(id); }
+    catch { return null; }
+    const entry = (data?.[section] || []).find(item => item.id === id);
+    return entry ? {section, entry} : null;
+  }
+
+  function enableArticleReferences(wrapper) {
+    for (const anchor of wrapper.querySelectorAll("a[href]")) {
+      const reference = resolveArticleReference(anchor);
+      if (!reference) continue;
+      anchor.removeAttribute("target");
+      anchor.removeAttribute("rel");
+      anchor.addEventListener("click", event => {
+        event.preventDefault();
+        const host = element("span", "article-reference");
+        const heading = element("span", "article-reference-heading");
+        heading.append(element("span", "article-reference-title", reference.entry.title));
+        const close = element("button", "article-reference-close", "閉じる");
+        close.type = "button";
+        close.setAttribute("aria-label", "参照記事を閉じる");
+        heading.append(close);
+        const panel = element("span", "article-reference-panel");
+        const tags = renderTags(reference.entry);
+        if (tags) panel.append(tags);
+        // 再帰参照を自動では展開しない。クリック時のみ次の階層を生成する。
+        panel.append(renderMarkdown(reference.entry.body));
+        host.append(heading, panel);
+        close.addEventListener("click", () => host.replaceWith(anchor));
+        anchor.replaceWith(host);
+      });
+    }
+  }
+
   function renderMarkdown(body) {
     const wrapper = element("div", "article-body");
     // CDNが使えない場合はプレーンテキストで表示し、外部ライブラリ不達でも内容を失わない。
@@ -188,6 +238,7 @@
     }
     const untrustedHtml = window.marked.parse(normalizeMathDelimiters(body), { gfm: true, breaks: true });
     wrapper.innerHTML = window.DOMPurify.sanitize(untrustedHtml);
+    enableArticleReferences(wrapper);
     wrapper.querySelectorAll("a").forEach(a => {
       if (a.href.startsWith("http:" ) || a.href.startsWith("https:")) {
         a.target = "_blank";

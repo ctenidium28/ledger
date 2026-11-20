@@ -1,0 +1,40 @@
+/* 知識グラフ試験版：既存のstyle.cssに依存する追加レイアウト */
+.graph-layout { width: min(1500px, calc(100% - 32px)); }
+.graph-main { padding: 22px; }
+.graph-heading h1 { margin: 0; color: var(--heading); font-size: 25px; }
+.graph-heading p { margin: 5px 0 16px; color: var(--muted); font-size: 13px; }
+.graph-beta { font-size: 12px; font-weight: normal; color: var(--muted); vertical-align: middle; }
+.graph-toolbar, .graph-file-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; }
+.graph-toolbar button, .graph-file-toolbar button, .graph-import-label, .graph-inspector button { color: var(--text); font: inherit; font-size: 13px; background: var(--hover); border: 1px solid var(--border); border-radius: 6px; padding: 7px 12px; cursor: pointer; }
+.graph-toolbar button:hover, .graph-file-toolbar button:hover, .graph-import-label:hover, .graph-inspector button:hover { border-color: var(--link); }
+.graph-toolbar .active { background: #1c3b60; border-color: var(--link); }
+.graph-workspace { display: grid; grid-template-columns: minmax(0,1fr) 245px; gap: 12px; }
+.graph-surface { min-width: 0; border: 1px solid var(--border); border-radius: 9px; overflow: hidden; background-color: #0d1117; background-image: radial-gradient(#30363d 0.8px,transparent 0.8px); background-size: 18px 18px; }
+#graph-canvas { display: block; width: 100%; height: min(68vh, 690px); min-height: 410px; cursor: grab; touch-action: none; user-select: none; }
+#graph-canvas:active { cursor: grabbing; }
+.graph-node { cursor: move; }
+.graph-node.selected rect { filter: drop-shadow(0 0 5px #58a6ff); }
+.graph-node-label { font-family: system-ui, sans-serif; font-size: 15px; fill: #f1f5f9; font-weight: 600; }
+.graph-group { cursor: move; }
+.graph-group.selected rect { stroke-width: 4; }
+.graph-group-title { fill: #d6deeb; font: 600 17px system-ui, sans-serif; pointer-events: none; }
+.graph-edge { cursor: move; }
+.graph-edge.selected > path:first-child { stroke: #58a6ff; }
+.graph-edge-label { fill: #f1f5f9; font: 14px system-ui, sans-serif; paint-order: stroke; stroke: #0d1117; stroke-width: 5px; }
+.graph-waypoint { fill: #f1f5f9; stroke: #2563eb; stroke-width: 3; cursor: move; }
+.graph-inspector { border: 1px solid var(--border); border-radius: 9px; padding: 12px; background: #111820; font-size: 13px; max-height: 690px; overflow: auto; }
+.graph-inspector h2 { margin: 0 0 12px; font-size: 16px; }
+.graph-inspector h3 { margin: 0 0 12px; font-size: 15px; }
+.graph-inspector label { display: block; margin-bottom: 13px; }
+.graph-inspector input:not([type=checkbox]), .graph-inspector textarea, .graph-inspector select { display: block; box-sizing: border-box; width: 100%; background: var(--background); color: var(--text); border: 1px solid var(--border); border-radius: 5px; padding: 6px; font: inherit; margin-top: 5px; }
+.graph-inspector input[type=color] { height: 40px; cursor: pointer; }
+.graph-inspector input[type=range] { padding: 0; }
+.graph-inspector fieldset { border: 1px solid var(--border); border-radius: 6px; margin: 12px 0 0; }
+.graph-inspector .graph-check { display: flex; align-items: flex-start; gap: 5px; margin: 7px 0; overflow-wrap: anywhere; }
+.graph-inspector .graph-check input { margin: 3px; }
+.graph-import-label { position: relative; overflow: hidden; }
+.graph-import-label input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.graph-status { min-height: 1.5em; margin: 10px 0 4px; font-size: 13px; color: var(--link); }
+.graph-help { font-size: 12px; color: var(--muted); line-height: 1.7; }
+@media (max-width: 900px) { .graph-workspace { grid-template-columns: 1fr; } .graph-inspector { max-height: none; } }
+@media (max-width: 760px) { .graph-layout { width: min(100% - 24px, 640px); } .graph-main { padding: 15px; } #graph-canvas { min-height: 350px; height: 55vh; } }
