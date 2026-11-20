@@ -201,8 +201,9 @@
     }
   });
   inspector.addEventListener("change",ev=>{
-    const field=ev.target.dataset.field;
-    if(field){const [type,id]=[...selected][0].split(":");const item=lookup(type,id);if(item){item[field]=ev.target.value;changed();}return;}
+    // 通常の入力欄は input イベントで更新済み。
+    // blur に伴う change で別の選択項目を誤更新しない。
+    if (ev.target.dataset.field) return;
     const nodeId=ev.target.dataset.nodeId;if(!nodeId||selected.size!==1)return;
     const [type,id]=[...selected][0].split(":");if(type!=="group")return;
     const group=lookup(type,id);
@@ -238,9 +239,11 @@
   });
   $("graph-publish").addEventListener("click",async()=>{
     const json=JSON.stringify(graph,null,2)+"\n";
-    try{await navigator.clipboard.writeText(json);statusText("JSONをコピーしました。GitHubの編集画面に貼り付けてコミットしてください");}
-    catch{statusText("コピーに失敗しました。「JSON出力」で保存してGitHubへアップロードしてください");}
+    const copying = navigator.clipboard.writeText(json);
+    // ポップアップがブロックされないようクリック直後に編集画面を開く。
     window.open("https://github.com/ctenidium28/ledger/edit/main/content/graph.json","_blank","noopener,noreferrer");
+    try{await copying;statusText("JSONをコピーしました。GitHubの編集画面に貼り付けてコミットしてください");}
+    catch{statusText("コピーに失敗しました。「JSON出力」で保存してGitHubへアップロードしてください");}
   });
   window.addEventListener("keydown",ev=>{
     if((ev.key==="Delete"||ev.key==="Backspace")&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||"")){ev.preventDefault();removeSelected();}
