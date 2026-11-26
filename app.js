@@ -7,6 +7,7 @@
   const content = document.querySelector("#content");
   const navigation = document.querySelectorAll("[data-nav]");
   let data = null;
+  const sectionTitles = { resources: "資料", notes: "学習ノート", ledger: "台帳" };
 
   // MarkedにKaTeX拡張を一度だけ登録する。数式のコードブロックは解析しない。
   // 拡張が読み込めない場合も、記事本文は従来どおり表示する。
@@ -79,7 +80,7 @@
   }
 
   function renderCollection(section) {
-    const sectionTitle = section === "notes" ? "学習ノート" : "台帳";
+    const sectionTitle = sectionTitles[section];
     const entries = data[section] || [];
     content.replaceChildren(heading(sectionTitle));
     const list = element("ul", "article-list");
@@ -186,13 +187,13 @@
     catch { return null; }
     let section, id, match;
     if (url.hostname === "github.com") {
-      match = url.pathname.match(/^\/ctenidium28\/ledger\/blob\/[^/]+\/content\/(notes|ledger)\/(.+)\.md$/);
+      match = url.pathname.match(/^\/ctenidium28\/ledger\/blob\/[^/]+\/content\/(resources|notes|ledger)\/(.+)\.md$/);
       if (match) { section = match[1]; id = match[2]; }
     } else if (url.hostname === "raw.githubusercontent.com") {
-      match = url.pathname.match(/^\/ctenidium28\/ledger\/[^/]+\/content\/(notes|ledger)\/(.+)\.md$/);
+      match = url.pathname.match(/^\/ctenidium28\/ledger\/[^/]+\/content\/(resources|notes|ledger)\/(.+)\.md$/);
       if (match) { section = match[1]; id = match[2]; }
     } else if (url.origin === window.location.origin && /\/(?:index\.html)?$/.test(url.pathname)) {
-      match = url.hash.match(/^#\/article\/(notes|ledger)\/([^/?#]+)/);
+      match = url.hash.match(/^#\/article\/(resources|notes|ledger)\/([^/?#]+)/);
       if (match) { section = match[1]; id = match[2]; }
     }
     if (!section || !id) return null;
@@ -249,11 +250,11 @@
   }
 
   function renderArticle(section, id) {
-    if (!(["notes", "ledger"].includes(section))) return renderNotFound();
+    if (!Object.hasOwn(sectionTitles, section)) return renderNotFound();
     const entries = data[section] || [];
     const entry = entries.find(entry => entry.id === id);
     if (!entry) return renderNotFound();
-    const back = element("a", "back-link", `← ${section === "notes" ? "学習ノート" : "台帳"}に戻る`);
+    const back = element("a", "back-link", `← ${sectionTitles[section]}に戻る`);
     back.href = `#/${section}`;
     const head = element("header", "article-head");
     head.append(element("h1", "", entry.title));
@@ -280,7 +281,7 @@
     if (!data) return;
     const [page, section, id] = getRoute();
     if (page === "memo") renderMemo();
-    else if (page === "notes" || page === "ledger") renderCollection(page);
+    else if (Object.hasOwn(sectionTitles, page)) renderCollection(page);
     else if (page === "article" && section && id) renderArticle(section, id);
     else renderNotFound();
   }

@@ -44,14 +44,24 @@
     return {version:1, nodes, edges, groups};
   }
 
-  const nodeHeight = () => 58;
+  // 旧データの size (80–300) を文字サイズ (12–40px) に換算する。
+  // データ形式を維持するため、既存の公開版・ローカル下書きも読み込める。
+  const fontSize = n => Math.round(12 + (n.size - 80) * 28 / 220);
+  const textContext = document.createElement("canvas").getContext("2d");
+  function nodeWidth(n) {
+    const size = fontSize(n);
+    if (!textContext) return Math.max(size, n.label.length * size) + 12;
+    textContext.font = `600 ${size}px system-ui, sans-serif`;
+    return Math.max(size, textContext.measureText(n.label).width) + 12;
+  }
+  const nodeHeight = n => fontSize(n) * 1.25 + 8;
   function groupRect(group) {
     const nodes = group.nodeIds.map(id => lookup("node", id)).filter(Boolean);
     if (!nodes.length) return null;
-    return {x: Math.min(...nodes.map(n=>n.x-n.size/2))-28,
-      y: Math.min(...nodes.map(n=>n.y-nodeHeight()/2))-44,
-      right: Math.max(...nodes.map(n=>n.x+n.size/2))+28,
-      bottom: Math.max(...nodes.map(n=>n.y+nodeHeight()/2))+28};
+    return {x: Math.min(...nodes.map(n=>n.x-nodeWidth(n)/2))-28,
+      y: Math.min(...nodes.map(n=>n.y-nodeHeight(n)/2))-44,
+      right: Math.max(...nodes.map(n=>n.x+nodeWidth(n)/2))+28,
+      bottom: Math.max(...nodes.map(n=>n.y+nodeHeight(n)/2))+28};
   }
   function svgElement(tag, props = {}, parent = svg) {
     const el = document.createElementNS(NS, tag);
@@ -61,15 +71,15 @@
   function edgePoint(node, next) {
     const dx = next.x-node.x, dy = next.y-node.y;
     if (!dx && !dy) return {x:node.x,y:node.y};
-    const t = Math.min((node.size/2)/(Math.abs(dx)||1e-9), (nodeHeight()/2)/(Math.abs(dy)||1e-9));
+    const t = Math.min((nodeWidth(node)/2)/(Math.abs(dx)||1e-9), (nodeHeight(node)/2)/(Math.abs(dy)||1e-9));
     return {x:node.x+dx*t,y:node.y+dy*t};
   }
   function route(edge) {
     const a=lookup("node",edge.from),b=lookup("node",edge.to);
     if (!a||!b)return [];
     if (a.id===b.id && edge.waypoints.length===0) return [
-      {x:a.x+a.size/2,y:a.y},{x:a.x+a.size/2+60,y:a.y-110},
-      {x:a.x-a.size/2-60,y:a.y-110},{x:a.x-a.size/2,y:a.y}
+      {x:a.x+nodeWidth(a)/2,y:a.y},{x:a.x+nodeWidth(a)/2+60,y:a.y-110},
+      {x:a.x-nodeWidth(a)/2-60,y:a.y-110},{x:a.x-nodeWidth(a)/2,y:a.y}
     ];
     const via=edge.waypoints;
     return [edgePoint(a,via[0]||b),...via,edgePoint(b,via[via.length-1]||a)];
@@ -107,29 +117,30 @@
       if(selected.has(key("edge",e.id)))e.waypoints.forEach((p,i)=>svgElement("circle",{cx:p.x,cy:p.y,r:7,class:"graph-waypoint","data-kind":"waypoint","data-id":e.id,"data-index":i},svg));
     }
     for(const n of graph.nodes){const grp=svgElement("g",{"data-kind":"node","data-id":n.id,class:`graph-node ${selected.has(key("node",n.id))?"selected":""}`});
-      svgElement("rect",{x:n.x-n.size/2,y:n.y-nodeHeight()/2,width:n.size,height:nodeHeight(),rx:11,fill:n.color,"fill-opacity":0.2,stroke:n.color,"stroke-width":selected.has(key("node",n.id))?3.5:2},grp);
-      const label=svgElement("text",{x:n.x,y:n.y+5,"text-anchor":"middle",class:"graph-node-label","pointer-events":"none"},grp);
-      const count=Math.max(5,Math.floor(n.size/13));label.textContent=n.label.length>count?n.label.slice(0,count-1)+"…":n.label;
+      // 透明なヒット領域は操作用。画面には文字だけを描画する。
+      svgElement("rect",{x:n.x-nodeWidth(n)/2,y:n.y-nodeHeight(n)/2,width:nodeWidth(n),height:nodeHeight(n),fill:"transparent",stroke:"none"},grp);
+      const label=svgElement("text",{x:n.x,y:n.y,"text-anchor":"middle","dominant-baseline":"central",class:"graph-node-label",fill:n.color,"font-size":fontSize(n),"pointer-events":"none"},grp);
+      label.textContent=n.label;
       if(n.description){const tip=svgElement("title",{},grp);tip.textContent=n.description;}
     }
   }
   function statusText(s) {status.textContent=s;}
   function save() {
-    try{localStorage.setItem(STORE,JSON.stringify(graph));statusText("下書きをこのブラウザに保存しました");}
+    try{localStorage.setItem(STORE,JSON.stringify(graph));}
     catch(e){statusText("保存不可：ブラウザのストレージを確認してください");}
   }
   function changed() {draw();save();}
   function inspect() {
-    if(selected.size!==1){inspector.innerHTML=selected.size?`<p>${selected.size}個選択中。ドラッグでまとめて移動できます。</p>`:"<p>ノード、辺、グループを選択すると、ここで内容を編集できます。</p>";return;}
+    if(selected.size!==1){inspector.innerHTML=selected.size?`<p>${selected.size}個選択中</p>`:"";return;}
     const [type,id]=[...selected][0].split(":");const obj=lookup(type,id);
     if(!obj){inspector.textContent="";return;}
-    if(type==="node")inspector.innerHTML=`<h3>ノード</h3><label>ラベル<input data-field="label" maxlength="150" value="${escapeHtml(obj.label)}"></label><label>説明<textarea data-field="description" rows="5" maxlength="3000">${escapeHtml(obj.description)}</textarea></label><label>横幅 <output id="graph-node-size">${obj.size}</output><input type="range" min="80" max="300" step="5" data-field="size" value="${obj.size}"></label><label>色<input type="color" data-field="color" value="${obj.color}"></label>`;
-    else if(type==="edge")inspector.innerHTML=`<h3>エッジ</h3><label>ラベル<input data-field="label" maxlength="150" value="${escapeHtml(obj.label)}"></label><label>種類<select data-field="type"><option value="undirected">無向辺</option><option value="directed">有向辺</option><option value="bidirectional">双方向</option></select></label><button type="button" id="graph-add-waypoint">経由点を追加</button><p class="graph-help">経由点の丸いハンドルをドラッグして位置を変更できます。</p>`;
+    if(type==="node")inspector.innerHTML=`<h3>ノード</h3><label>ラベル<input data-field="label" maxlength="150" value="${escapeHtml(obj.label)}"></label><label>説明<textarea data-field="description" rows="5" maxlength="3000">${escapeHtml(obj.description)}</textarea></label><label>文字サイズ <output id="graph-node-size">${fontSize(obj)}px</output><input type="range" min="80" max="300" step="5" data-field="size" value="${obj.size}"></label><label>色<input type="color" data-field="color" value="${obj.color}"></label>`;
+    else if(type==="edge")inspector.innerHTML=`<h3>エッジ</h3><label>ラベル<input data-field="label" maxlength="150" value="${escapeHtml(obj.label)}"></label><label>種類<select data-field="type"><option value="undirected">無向辺</option><option value="directed">有向辺</option><option value="bidirectional">双方向</option></select></label><button type="button" id="graph-add-waypoint">経由点を追加</button>`;
     else if(type==="group")inspector.innerHTML=`<h3>グループ</h3><label>名前<input data-field="name" maxlength="150" value="${escapeHtml(obj.name)}"></label><label>領域の色<input type="color" data-field="color" value="${obj.color}"></label><fieldset><legend>所属ノード</legend>${graph.nodes.map(n=>`<label class="graph-check"><input type="checkbox" data-node-id="${escapeHtml(n.id)}" ${obj.nodeIds.includes(n.id)?"checked":""}>${escapeHtml(n.label)}</label>`).join("")}</fieldset>`;
     if(type==="edge")inspector.querySelector("select").value=obj.type;
   }
   function select(kind,id,ctrl){const k=key(kind,id);if(ctrl){if(selected.has(k))selected.delete(k);else selected.add(k);}else if(!selected.has(k))selected=new Set([k]);draw();inspect();}
-  function newNode(){const c=pointAt({clientX:svg.getBoundingClientRect().left+svg.clientWidth/2,clientY:svg.getBoundingClientRect().top+svg.clientHeight/2});const n={id:uid(),x:c.x+(graph.nodes.length%4-1.5)*220,y:c.y+(Math.floor(graph.nodes.length/4)-1)*110,label:"新しいノード",description:"",size:150,color:DEFAULT_COLOR};graph.nodes.push(n);selected=new Set([key("node",n.id)]);changed();inspect();}
+  function newNode(){const c=pointAt({clientX:svg.getBoundingClientRect().left+svg.clientWidth/2,clientY:svg.getBoundingClientRect().top+svg.clientHeight/2});const n={id:uid(),x:c.x+(graph.nodes.length%3-1)*100,y:c.y+(Math.floor(graph.nodes.length%9/3)-1)*70,label:"新しいノード",description:"",size:150,color:DEFAULT_COLOR};graph.nodes.push(n);selected=new Set([key("node",n.id)]);changed();inspect();}
   function newGroup(){const ids=[...selected].filter(x=>x.startsWith("node:")).map(x=>x.slice(5));if(!ids.length){statusText("Ctrl+クリックでグループに入れるノードを選択してください");return;}
     const g={id:uid(),name:"新しいグループ",color:"#8b5cf6",nodeIds:ids};graph.groups.push(g);selected=new Set([key("group",g.id)]);changed();inspect();}
   function removeSelected(){if(!selected.size)return;
@@ -196,7 +207,7 @@
   inspector.addEventListener("input",ev=>{
     if(selected.size!==1)return;const [type,id]=[...selected][0].split(":");const item=lookup(type,id);if(!item)return;
     const field=ev.target?.dataset.field;if(field){item[field]=field==="size"?clamp(Number(ev.target.value),80,300):ev.target.value;
-      if(field==="size")$("graph-node-size").textContent=item.size;
+      if(field==="size")$("graph-node-size").textContent=`${fontSize(item)}px`;
       changed();
     }
   });
@@ -221,17 +232,39 @@
   $("graph-connect").addEventListener("click",()=>{action=action==="connect"?null:"connect";edgeStart=null;$("graph-connect").classList.toggle("active",action==="connect");statusText(action?"始点と終点のノードをクリックしてください":"エッジ追加を中止しました");});
   $("graph-add-group").addEventListener("click",newGroup);
   $("graph-delete").addEventListener("click",removeSelected);
-  $("graph-save").addEventListener("click",save);
-  $("graph-view").addEventListener("click",()=>{view={x:0,y:0,w:1200,h:760};draw();});
+  function fitViewport() {
+    const rect = svg.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const height = view.w * rect.height / rect.width;
+    view.y += (view.h - height) / 2;
+    view.h = height;
+    draw();
+  }
+  function resetView() {
+    view={x:0,y:0,w:1200,h:760};
+    fitViewport();
+  }
+  $("graph-view").addEventListener("click",resetView);
+  window.addEventListener("resize",fitViewport);
+  function togglePanel(button, panel, open) {
+    panel.hidden = !open;
+    button.setAttribute("aria-expanded", String(open));
+  }
+  const menuButton=$("graph-menu-toggle"), menu=$("graph-menu");
+  const editButton=$("graph-edit-toggle"), tools=$("graph-tools");
+  menuButton.addEventListener("click",()=>togglePanel(menuButton,menu,menu.hidden));
+  editButton.addEventListener("click",()=>togglePanel(editButton,tools,tools.hidden));
+  document.addEventListener("pointerdown",ev=>{
+    if (!menu.hidden && !menu.contains(ev.target) && !menuButton.contains(ev.target))
+      togglePanel(menuButton,menu,false);
+  });
+  window.addEventListener("keydown",ev=>{
+    if(ev.key==="Escape"&&!menu.hidden)togglePanel(menuButton,menu,false);
+  });
   $("graph-export").addEventListener("click",()=>{
     const blob=new Blob([JSON.stringify(graph,null,2)+"\n"],{type:"application/json"});
     const url=URL.createObjectURL(blob),link=document.createElement("a");link.href=url;link.download="graph.json";document.body.append(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
     statusText("graph.json をダウンロードしました");
-  });
-  $("graph-import").addEventListener("change",async ev=>{
-    const file=ev.target.files?.[0];if(!file)return;
-    try{const loaded=normalize(JSON.parse(await file.text()));if(!confirm("現在の下書きを読み込んだJSONで置き換えますか？"))return;graph=loaded;selected.clear();changed();inspect();}
-    catch(err){statusText(`読み込みエラー: ${err.message}`);}finally{ev.target.value="";}
   });
   $("graph-reset").addEventListener("click",()=>{
     if(!confirm("ブラウザ内の下書きを破棄して、GitHubに公開済みのグラフへ戻しますか？"))return;
@@ -252,9 +285,9 @@
   async function init(){
     try{const response=await fetch(`./data/graph.json?v=${Date.now()}`,{cache:"no-store"});if(response.ok){graph=normalize(await response.json());published=JSON.stringify(graph);}}
     catch(e){statusText("公開グラフを取得できなかったため、空のグラフから開始します");}
-    try{const draft=localStorage.getItem(STORE);if(draft){graph=normalize(JSON.parse(draft));statusText("保存済みのローカル下書きを読み込みました");}}
+    try{const draft=localStorage.getItem(STORE);if(draft){graph=normalize(JSON.parse(draft));}}
     catch(e){statusText("保存済み下書きの読み込みに失敗しました");}
-    draw();inspect();
+    resetView();inspect();
   }
   init();
 })();

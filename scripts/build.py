@@ -93,6 +93,7 @@ def build() -> None:
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "memo": memo_path.read_text(encoding="utf-8-sig") if memo_path.exists() else "",
+        "resources": read_collection("resources"),
         "notes": read_collection("notes"),
         "ledger": read_collection("ledger"),
     }
@@ -108,7 +109,7 @@ def build() -> None:
         json.dumps(graph_data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
     (DEST / ".nojekyll").touch()
-    print(f"Build OK: メモ / 学習ノート {len(payload['notes'])} 件 / 台帳 {len(payload['ledger'])} 件")
+    print(f"Build OK: メモ / 資料 {len(payload['resources'])} 件 / 学習ノート {len(payload['notes'])} 件 / 台帳 {len(payload['ledger'])} 件")
 
 
 if __name__ == "__main__":

@@ -17,6 +17,63 @@ content:
       delete: false
       rename: false
 
+  - name: resources
+    label: 資料
+    type: collection
+    path: content/resources
+    format: yaml-frontmatter
+    filename: "{year}-{month}-{day}-{hour}-{minute}-{second}-{primary}.md"
+    view:
+      primary: title
+      fields: [title, date]
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    operations:
+      rename: false
+    fields:
+      - name: title
+        label: 題名
+        type: string
+        required: true
+      # 4つの許可パターンのみ選択可能。初稿は必須、加筆は任意。
+      - name: attribution
+        label: 執筆・加筆タグ（必須）
+        type: select
+        required: true
+        description: 初稿の作成者を必ず選択し、必要な場合だけ異なる主体による加筆を選びます。
+        options:
+          values:
+            - name: human
+              label: ユーザー執筆
+            - name: llm
+              label: LLM生成
+            - name: human_llm
+              label: ユーザー執筆 ＋ LLM加筆
+            - name: llm_human
+              label: LLM生成 ＋ ユーザー加筆
+      - name: body
+        label: 本文
+        type: code
+        options:
+          format: markdown
+          extensions: [png, jpg, jpeg, gif, webp]
+      - name: images
+        label: 添付画像（任意）
+        type: image
+        options:
+          multiple:
+            max: 12
+          extensions: [png, jpg, jpeg, gif, webp]
+      - name: attachments
+        label: 添付ファイル（任意）
+        type: file
+        options:
+          multiple:
+            max: 12
+          extensions: [pdf, circ, zip, txt, md, json, csv, py, log]
+
   - name: notes
     label: 学習ノート
     type: collection
